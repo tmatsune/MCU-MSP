@@ -8,7 +8,7 @@ int main(void)
   led_init();
 
   while(1){
-    led_toggle();
+    led_toggle(); 
     for (i=10000; i>0; i--);
   }
   return 0;
