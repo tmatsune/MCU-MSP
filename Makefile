@@ -22,6 +22,7 @@ RM := rm -rf
 DEBUG := LD_LIBRARY_PATH=$(DEBUG_DRIVERS_DIR) $(DEBUG_BIN_DIR)/mspdebug
 CPPCHECK := cppcheck
 FORMAT := clang-format
+SIZE = $(MSPGCC_BIN_DIR)/msp430-elf-size
 
 #------------------------------
 # Files & Sources
@@ -30,12 +31,13 @@ TARGET := $(BIN_DIR)/output.elf
 
 SOURCES := \
   src/main.c \
-  src/drivers/led.c
+  src/drivers/led.c \
+	src/commone/assert_handler.c
 
 OBJECT_NAMES := $(notdir $(SOURCES:.c=.o))
 OBJECTS := $(patsubst %,$(OBJ_DIR)/%,$(OBJECT_NAMES))
 
-vpath %.c src src/drivers
+vpath %.c src src/drivers src/common
 
 #------------------------------
 # Preprocessor Defines
@@ -85,4 +87,7 @@ cppcheck:
 
 format:
 	$(FORMAT) -i $(SOURCES)
+
+size: $(TARGET)
+	@$(SIZE) $(TARGET)
 

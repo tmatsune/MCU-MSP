@@ -1,18 +1,21 @@
-#include <msp430.h>
 
-void mcu_init(void)
-{
-  WDTCTL = WDTPW + WDTHOLD;
-  __enable_interrupt();
-}
 
-void led_setup(void)
-{
-  // p1.1 output 
-  P1DIR |= BIT1; 
-  P1OUT &= ~BIT1; 
+Only affecting P1.1
+P1DIR |= BIT1;  // Set OUTPUT
+P1DIR &= ~BIT1; // Set INPUT
+P1OUT |= BIT1;  // Output HIGH
+P1OUT &= ~BIT1; // Output LOW
+P1OUT ^= BIT1;  // Toggle 
+P1REN |= BIT1;  // Enable Pull UP/Down resistor 
+  P1OUT |= BIT1;  // pull-up resistor
+  P1OUT &= ~BIT1; // pull-down resistor
+P1IES |= BIT1   // Interrupt on falling edge
+P1IFG &= ~BIT3; // Clear interrupt flag 
 
-  // P1.2 interrupt 
+
+Interrupt: 
+
+  /* ---- P1.2 interrupt ---- */
   P1DIR &= ~BIT2; // P1.2 INPUT 
   P1REN |= BIT2;  // P1.2 enable pull resistor
   P1OUT |= BIT2;  // p1.2 pull-down resistor active low 
@@ -21,8 +24,6 @@ void led_setup(void)
   P1IES |= BIT2; // set edge: falling 
   
   P1IFG &= ~BIT2; // clear interrupts flags on P1.2 
-}
-
 
 __attribute__((interrupt(PORT1_VECTOR)))
 void Port_1(void) {
@@ -32,10 +33,4 @@ void Port_1(void) {
     }
 }
 
-int main(void) {
-  mcu_init();
-  led_setup();
 
-  return 0;
-}
-  
