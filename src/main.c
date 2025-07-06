@@ -1,41 +1,31 @@
+#include "common/defines.h"
+#include "drivers/mcu_init.h"
+#include "drivers/isr.h"
 #include <msp430.h>
+#include <stdint.h>
 
-void mcu_init(void)
-{
-  WDTCTL = WDTPW + WDTHOLD;
-  __enable_interrupt();
-}
+__attribute__((interrupt(PORT1_VECTOR))) void Port_1(void) {
+  volatile unsigned int pin;
 
-void led_setup(void)
-{
-  // p1.1 output 
-  P1DIR |= BIT1; 
-  P1OUT &= ~BIT1; 
-
-  // P1.2 interrupt 
-  P1DIR &= ~BIT2; // P1.2 INPUT 
-  P1REN |= BIT2;  // P1.2 enable pull resistor
-  P1OUT |= BIT2;  // p1.2 pull-down resistor active low 
-  
-  P1IE |= BIT2; // enable interrupts P1.2
-  P1IES |= BIT2; // set edge: falling 
-  
-  P1IFG &= ~BIT2; // clear interrupts flags on P1.2 
-}
-
-
-__attribute__((interrupt(PORT1_VECTOR)))
-void Port_1(void) {
-    if (P1IFG & BIT2) {
-
-        P1IFG &= ~BIT2; // clear interrupt flasgs on P1.2 
+  for (pin = 0; pin < PIN_COUNT; pin++) {
+    uint8_t mask = (1 << pin);
+    if (P1IFG & mask) {
+      if (isr_functions[pin])
+        isr_functions[pin]();
+      P1IFG &= ~mask;
     }
+  }
+}
+
+void pin_setup(void) {
+  P1DIR |= BIT1;
+  P1OUT &= ~BIT1;
 }
 
 int main(void) {
   mcu_init();
-  led_setup();
+  pin_setup();
+  isr_setup();
 
-  return 0;
+  while(1);
 }
-  

@@ -33,4 +33,10 @@ void Port_1(void) {
     }
 }
 
+void mcu_init(void)
+{
+  WDTCTL = WDTPW + WDTHOLD;
+  __enable_interrupt();
+}
+
 

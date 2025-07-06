@@ -32,7 +32,9 @@ TARGET := $(BIN_DIR)/output.elf
 SOURCES := \
   src/main.c \
   src/drivers/led.c \
-	src/commone/assert_handler.c
+  src/drivers/mcu_init.c \
+	src/drivers/isr.c \
+	src/common/assert_handler.c 
 
 OBJECT_NAMES := $(notdir $(SOURCES:.c=.o))
 OBJECTS := $(patsubst %,$(OBJ_DIR)/%,$(OBJECT_NAMES))
