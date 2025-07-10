@@ -34,6 +34,7 @@ SOURCES := \
   src/drivers/led.c \
   src/drivers/mcu_init.c \
 	src/drivers/isr.c \
+	src/drivers/uart.c \
 	src/common/assert_handler.c 
 
 OBJECT_NAMES := $(notdir $(SOURCES:.c=.o))

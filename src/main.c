@@ -1,6 +1,7 @@
 #include "common/defines.h"
 #include "drivers/mcu_init.h"
 #include "drivers/isr.h"
+#include "drivers/uart.h"
 #include <msp430.h>
 #include <stdint.h>
 
@@ -18,14 +19,25 @@ __attribute__((interrupt(PORT1_VECTOR))) void Port_1(void) {
 }
 
 void pin_setup(void) {
-  P1DIR |= BIT1;
-  P1OUT &= ~BIT1;
+  P1SEL |= BIT1 + BIT2;
+  P1SEL2 |= BIT1 + BIT2;
 }
 
 int main(void) {
+
   mcu_init();
   pin_setup();
-  isr_setup();
+  uart_init();
 
-  while(1);
+  while(1) {
+    uart_putchar_pulling('h');
+    uart_putchar_pulling('e');
+    uart_putchar_pulling('l');
+    uart_putchar_pulling('l');
+    uart_putchar_pulling('o');
+    uart_putchar_pulling('\n');
+    __delay_cycles(1000000);
+  }
+
+  return 0;
 }
